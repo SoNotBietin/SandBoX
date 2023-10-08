@@ -3,24 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touch2move Game</title>
+    <title>Touch2move and Shoot Game</title>
     <style>
-        /* Style your game element here */
+        /* Style your game elements here */
         #game-element {
             width: 50px;
             height: 50px;
             background-color: red;
             position: absolute;
         }
+
+        #shoot-button {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            cursor: pointer;
+        }
+
+        .oval {
+            width: 20px;
+            height: 10px;
+            background-color: green;
+            position: absolute;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
     <div id="game-element"></div>
+    <div id="shoot-button"></div>
 
     <script>
         const gameElement = document.getElementById('game-element');
+        const shootButton = document.getElementById('shoot-button');
 
         let isDragging = false;
+
+        shootButton.addEventListener('click', () => {
+            shootOval();
+        });
 
         gameElement.addEventListener('touchstart', (e) => {
             isDragging = true;
@@ -37,6 +62,27 @@
         gameElement.addEventListener('touchend', () => {
             isDragging = false;
         });
+
+        function shootOval() {
+            const oval = document.createElement('div');
+            oval.className = 'oval';
+            oval.style.left = gameElement.getBoundingClientRect().left + 'px';
+            oval.style.top = gameElement.getBoundingClientRect().top + 'px';
+
+            const angle = Math.random() * 360;
+            const distance = Math.random() * 100;
+            const radians = (angle * Math.PI) / 180;
+
+            const x = distance * Math.cos(radians);
+            const y = distance * Math.sin(radians);
+
+            oval.style.transform = `translate(${x}px, ${y}px)`;
+            document.body.appendChild(oval);
+
+            setTimeout(() => {
+                document.body.removeChild(oval);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
