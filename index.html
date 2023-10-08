@@ -1,84 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TopView 2D Player</title>
+    <title>UI Example</title>
     <style>
-        /* Add your CSS styling here */
         body {
-            margin: 0;
-            overflow: hidden;
+            font-family: 'Noto Sans', sans-serif;
+        }
+        strong {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Your game logic goes here
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            width: 50,
-            height: 50,
-            // Add more player properties as needed
-        };
-
-        function drawPlayer() {
-            ctx.fillStyle = "blue"; // Change color as desired
-            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
-        }
-
-        // Handle touch controls
-        canvas.addEventListener("touchstart", handleTouchStart);
-        canvas.addEventListener("touchmove", handleTouchMove);
-
-        let touchStartX = 0;
-
-        function handleTouchStart(event) {
-            touchStartX = event.touches[0].clientX;
-        }
-
-        function handleTouchMove(event) {
-            const touchX = event.touches[0].clientX;
-            const deltaX = touchX - touchStartX;
-
-            // Use deltaX to control your player's movement
-            player.x += deltaX;
-
-            touchStartX = touchX;
-        }
-
-        // Handle click/tap to move
-        canvas.addEventListener("click", handleClick);
-
-        function handleClick(event) {
-            const clickX = event.clientX - canvas.getBoundingClientRect().left;
-            const clickY = event.clientY - canvas.getBoundingClientRect().top;
-
-            // Move the player to the clicked/tapped position
-            player.x = clickX;
-            player.y = clickY;
-        }
-
-        // Your game loop and rendering code goes here
-        function gameLoop() {
-            // Clear the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Update and render your game elements here
-            drawPlayer();
-
-            // Request the next frame
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Start the game loop
-        gameLoop();
-
-    </script>
+    <p><strong>UI Example</strong></p>
+    <button style="font-weight: bold; font-family: 'Comic Sans MS', cursive;">button here</button>
 </body>
 </html>
