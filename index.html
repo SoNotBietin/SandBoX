@@ -31,7 +31,7 @@
             y: canvas.height / 2, // Initial Y position
             size: 50, // Size of the player (adjust as needed)
             color: "red", // Player color
-            speed: 5, // Player movement speed (adjust as needed)
+            speed: 10, // Player movement speed (adjust as needed)
         };
         
         // Touch joystick properties
@@ -97,8 +97,15 @@
             
             if (distance > joystick.innerRadius) {
                 const angle = Math.atan2(deltaY, deltaX);
-                player.x += Math.cos(angle) * player.speed;
-                player.y += Math.sin(angle) * player.speed;
+                const newX = player.x + Math.cos(angle) * player.speed;
+                const newY = player.y + Math.sin(angle) * player.speed;
+                
+                // Check if the new position is within the canvas boundaries
+                if (newX - player.size / 2 >= 0 && newX + player.size / 2 <= canvas.width &&
+                    newY - player.size / 2 >= 0 && newY + player.size / 2 <= canvas.height) {
+                    player.x = newX;
+                    player.y = newY;
+                }
             }
             
             // Request animation frame
@@ -110,4 +117,3 @@
     </script>
 </body>
 </html>
-
