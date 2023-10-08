@@ -52,6 +52,18 @@
             touchStartX = touchX;
         }
 
+        // Handle click/tap to move
+        canvas.addEventListener("click", handleClick);
+
+        function handleClick(event) {
+            const clickX = event.clientX - canvas.getBoundingClientRect().left;
+            const clickY = event.clientY - canvas.getBoundingClientRect().top;
+
+            // Move the player to the clicked/tapped position
+            player.x = clickX;
+            player.y = clickY;
+        }
+
         // Your game loop and rendering code goes here
         function gameLoop() {
             // Clear the canvas
