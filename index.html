@@ -16,33 +16,33 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="nicknameInput">
-        <input type="text" placeholder="Enter Your Nickname" id="nickname">
-        <button onclick="setNickname()">Set Nickname</button>
+    <div id="startScreen">
+        <h1>Platformer Game</h1>
+        <label for="playerName">Enter your name:</label>
+        <input type="text" id="playerName" placeholder="Your Name">
+        <label for="playerColor">Choose your color:</label>
+        <input type="color" id="playerColor">
+        <button id="startButton">Start Game</button>
     </div>
+    <canvas id="gameCanvas"></canvas>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-
-        const nicknameInput = document.getElementById("nicknameInput");
-        const nicknameField = document.getElementById("nickname");
-        const setNicknameButton = document.querySelector("button");
-
+        
         // Set canvas dimensions to match the screen
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
+        
         // Player properties
         const player = {
             x: canvas.width / 2, // Initial X position
             y: canvas.height / 2, // Initial Y position
             size: 50, // Size of the player (adjust as needed)
             color: "red", // Player color
-            speed: 15, // Player movement speed (adjusted as requested)
-            nickname: "", // Player nickname
+            speed: 15, // Player movement speed
+            health: 100, // Player's health
         };
-
+        
         // Touch joystick properties
         const joystick = {
             x: 100, // Joystick X position
@@ -50,19 +50,42 @@
             outerRadius: 40, // Outer circle radius
             innerRadius: 20, // Inner circle radius
         };
-
+        
+        // Obstacles array
+        const obstacles = [];
+        
         // Initialize joystick position
         let joystickX = joystick.x;
         let joystickY = joystick.y;
         let isJoystickReleased = true; // Flag to check if joystick is released
-
+        
+        // Start screen elements
+        const startScreen = document.getElementById("startScreen");
+        const playerNameInput = document.getElementById("playerName");
+        const playerColorInput = document.getElementById("playerColor");
+        const startButton = document.getElementById("startButton");
+        
+        // Hide the game canvas initially
+        canvas.style.display = "none";
+        
+        // Event listener for start button click
+        startButton.addEventListener("click", () => {
+            // Hide the start screen
+            startScreen.style.display = "none";
+            // Show the game canvas
+            canvas.style.display = "block";
+            // Set player's name and color
+            player.name = playerNameInput.value || "Player";
+            player.color = playerColorInput.value || "red";
+        });
+        
         // Event listener for touch input
         canvas.addEventListener("touchmove", (e) => {
             // Calculate the distance between touch point and joystick center
             const deltaX = e.touches[0].clientX - joystick.x;
             const deltaY = e.touches[0].clientY - joystick.y;
             const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
+            
             // If the touch point is within the outer circle radius
             if (distance <= joystick.outerRadius) {
                 // Update joystick position based on touch input
@@ -76,7 +99,7 @@
                 joystickY = joystick.y + Math.sin(angle) * joystick.outerRadius;
             }
         });
-
+        
         // Event listener for joystick release
         canvas.addEventListener("touchend", () => {
             isJoystickReleased = true;
@@ -84,30 +107,47 @@
             joystickX = joystick.x;
             joystickY = joystick.y;
         });
-
-        // Function to set the player's nickname
-        function setNickname() {
-            const nickname = nicknameField.value;
-            if (nickname) {
-                player.nickname = nickname;
-                nicknameInput.style.display = "none";
+        
+        // Function to create obstacles
+        function createObstacle() {
+            const obstacle = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: 30,
+                color: "red",
+            };
+            obstacles.push(obstacle);
+        }
+        
+        // Function to handle collisions with obstacles
+        function handleObstacleCollisions() {
+            for (let i = 0; i < obstacles.length; i++) {
+                const obstacle = obstacles[i];
+                const distance = Math.sqrt((player.x - obstacle.x) ** 2 + (player.y - obstacle.y) ** 2);
+                if (distance < player.size / 2 + obstacle.size / 2) {
+                    // Player collided with an obstacle
+                    player.health -= 10; // Decrease health
+                    obstacles.splice(i, 1); // Remove the obstacle
+                    i--; // Decrement the index to account for the removed obstacle
+                }
             }
         }
-
+        
         // Game loop
         function gameLoop() {
             // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+            
+            // Draw obstacles
+            for (const obstacle of obstacles) {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x - obstacle.size / 2, obstacle.y - obstacle.size / 2, obstacle.size, obstacle.size);
+            }
+            
             // Draw the player
             ctx.fillStyle = player.color;
             ctx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size);
-
-            // Draw the player's nickname
-            ctx.fillStyle = "white";
-            ctx.font = "14px Arial";
-            ctx.fillText(player.nickname, player.x - player.size / 2, player.y - player.size / 2 - 10);
-
+            
             // Draw the touch joystick
             ctx.beginPath();
             ctx.arc(joystick.x, joystick.y, joystick.outerRadius, 0, Math.PI * 2);
@@ -115,25 +155,25 @@
             ctx.lineWidth = 2;
             ctx.stroke();
             ctx.closePath();
-
+            
             // Draw the inner circle of the joystick
             ctx.beginPath();
             ctx.arc(joystickX, joystickY, joystick.innerRadius, 0, Math.PI * 2);
             ctx.fillStyle = "white";
             ctx.fill();
             ctx.closePath();
-
+            
             // Update player position based on joystick input
             if (!isJoystickReleased) {
                 const deltaX = joystickX - joystick.x;
                 const deltaY = joystickY - joystick.y;
                 const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
+                
                 if (distance > joystick.innerRadius) {
                     const angle = Math.atan2(deltaY, deltaX);
                     const newX = player.x + Math.cos(angle) * player.speed;
                     const newY = player.y + Math.sin(angle) * player.speed;
-
+                    
                     // Check if the new position is within the canvas boundaries
                     if (newX - player.size / 2 >= 0 && newX + player.size / 2 <= canvas.width &&
                         newY - player.size / 2 >= 0 && newY + player.size / 2 <= canvas.height) {
@@ -142,14 +182,19 @@
                     }
                 }
             }
-
+            
+            // Handle collisions with obstacles
+            handleObstacleCollisions();
+            
             // Request animation frame
             requestAnimationFrame(gameLoop);
         }
-
+        
         // Start the game loop
         gameLoop();
+        
+        // Create initial obstacles
+        setInterval(createObstacle, 2000);
     </script>
 </body>
 </html>
-
