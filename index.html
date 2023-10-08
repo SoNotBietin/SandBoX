@@ -31,7 +31,7 @@
             y: canvas.height / 2, // Initial Y position
             size: 50, // Size of the player (adjust as needed)
             color: "red", // Player color
-            speed: 10, // Player movement speed (adjust as needed)
+            speed: 15, // Player movement speed (adjusted as requested)
         };
         
         // Touch joystick properties
@@ -45,6 +45,7 @@
         // Initialize joystick position
         let joystickX = joystick.x;
         let joystickY = joystick.y;
+        let isJoystickReleased = true; // Flag to check if joystick is released
         
         // Event listener for touch input
         canvas.addEventListener("touchmove", (e) => {
@@ -58,12 +59,21 @@
                 // Update joystick position based on touch input
                 joystickX = e.touches[0].clientX;
                 joystickY = e.touches[0].clientY;
+                isJoystickReleased = false;
             } else {
                 // Keep the inner circle (joystick) within the outer circle (joycircle)
                 const angle = Math.atan2(deltaY, deltaX);
                 joystickX = joystick.x + Math.cos(angle) * joystick.outerRadius;
                 joystickY = joystick.y + Math.sin(angle) * joystick.outerRadius;
             }
+        });
+        
+        // Event listener for joystick release
+        canvas.addEventListener("touchend", () => {
+            isJoystickReleased = true;
+            // Spring the inner joycircle back to the middle of the outer joycircle
+            joystickX = joystick.x;
+            joystickY = joystick.y;
         });
         
         // Game loop
@@ -91,20 +101,22 @@
             ctx.closePath();
             
             // Update player position based on joystick input
-            const deltaX = joystickX - joystick.x;
-            const deltaY = joystickY - joystick.y;
-            const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-            
-            if (distance > joystick.innerRadius) {
-                const angle = Math.atan2(deltaY, deltaX);
-                const newX = player.x + Math.cos(angle) * player.speed;
-                const newY = player.y + Math.sin(angle) * player.speed;
+            if (!isJoystickReleased) {
+                const deltaX = joystickX - joystick.x;
+                const deltaY = joystickY - joystick.y;
+                const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
                 
-                // Check if the new position is within the canvas boundaries
-                if (newX - player.size / 2 >= 0 && newX + player.size / 2 <= canvas.width &&
-                    newY - player.size / 2 >= 0 && newY + player.size / 2 <= canvas.height) {
-                    player.x = newX;
-                    player.y = newY;
+                if (distance > joystick.innerRadius) {
+                    const angle = Math.atan2(deltaY, deltaX);
+                    const newX = player.x + Math.cos(angle) * player.speed;
+                    const newY = player.y + Math.sin(angle) * player.speed;
+                    
+                    // Check if the new position is within the canvas boundaries
+                    if (newX - player.size / 2 >= 0 && newX + player.size / 2 <= canvas.width &&
+                        newY - player.size / 2 >= 0 && newY + player.size / 2 <= canvas.height) {
+                        player.x = newX;
+                        player.y = newY;
+                    }
                 }
             }
             
