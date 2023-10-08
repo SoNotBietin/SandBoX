@@ -1,86 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>2D Platformer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Your CSS goes here for styling the player and touchjoy */
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #game-container {
-            width: 100vw;
-            height: 100vh;
-            background-color: #222;
-            position: relative;
-        }
         #player {
             width: 50px;
             height: 50px;
-            background-color: #3498db;
+            background-color: blue;
             position: absolute;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
         }
-        #touchjoy-container {
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
+
+        #ground {
+            width: 100%;
+            height: 20px;
+            background-color: green;
             position: absolute;
-            bottom: 30px;
-            left: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #touchjoy {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 0, 0, 0.5);
-            border-radius: 50%;
-            position: absolute;
-            transform: translate(-50%, -50%);
+            bottom: 0;
         }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="player"></div>
-        <div id="touchjoy-container">
-            <div id="touchjoy"></div>
-        </div>
-    </div>
+    <div id="player"></div>
+    <div id="ground"></div>
 
     <script>
-        // JavaScript to handle touch controls
-        const touchjoyContainer = document.getElementById("touchjoy-container");
-        const touchjoy = document.getElementById("touchjoy");
-        const player = document.getElementById("player");
+        const player = document.getElementById('player');
+        const ground = document.getElementById('ground');
 
-        touchjoyContainer.addEventListener("touchstart", (e) => {
-            // Handle touch start
-            // Calculate touchjoy position based on touch start
-            const touchX = e.touches[0].clientX - touchjoyContainer.getBoundingClientRect().left;
-            const touchY = e.touches[0].clientY - touchjoyContainer.getBoundingClientRect().top;
-            movePlayer(touchX, touchY);
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                movePlayerLeft();
+            } else if (event.key === 'ArrowRight') {
+                movePlayerRight();
+            }
         });
 
-        touchjoyContainer.addEventListener("touchmove", (e) => {
-            // Handle touch move
-            // Calculate touchjoy position based on touch move
-            const touchX = e.touches[0].clientX - touchjoyContainer.getBoundingClientRect().left;
-            const touchY = e.touches[0].clientY - touchjoyContainer.getBoundingClientRect().top;
-            movePlayer(touchX, touchY);
-        });
-
-        function movePlayer(x, y) {
-            // Move the player to the new position
-            player.style.left = x - 25 + "px"; // Adjust for player size
-            player.style.top = y - 25 + "px"; // Adjust for player size
+        function movePlayerLeft() {
+            const currentPosition = player.style.left ? parseInt(player.style.left) : 0;
+            if (currentPosition > 0) {
+                player.style.left = (currentPosition - 5) + 'px';
+            }
         }
+
+        function movePlayerRight() {
+            const currentPosition = player.style.left ? parseInt(player.style.left) : 0;
+            const playerWidth = player.offsetWidth;
+            const screenWidth = window.innerWidth;
+            if (currentPosition + playerWidth < screenWidth) {
+                player.style.left = (currentPosition + 5) + 'px';
+            }
+        }
+
+        function checkCollision() {
+            const playerRect = player.getBoundingClientRect();
+            const groundRect = ground.getBoundingClientRect();
+
+            if (
+                playerRect.bottom >= groundRect.top &&
+                playerRect.right >= groundRect.left &&
+                playerRect.left <= groundRect.right
+            ) {
+                // You can add your collision logic here.
+                // For now, let's just log it.
+                console.log('Collision detected!');
+            }
+        }
+
+        // Check for collision on a timer.
+        setInterval(checkCollision, 100);
     </script>
 </body>
 </html>
