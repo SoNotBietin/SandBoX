@@ -6,6 +6,17 @@
     <title>Touch2move and Shoot Game</title>
     <style>
         /* Style your game elements here */
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
         #game-element {
             width: 50px;
             height: 50px;
@@ -34,10 +45,13 @@
     </style>
 </head>
 <body>
-    <div id="game-element"></div>
-    <div id="shoot-button"></div>
+    <div id="game-container">
+        <div id="game-element"></div>
+        <div id="shoot-button"></div>
+    </div>
 
     <script>
+        const gameContainer = document.getElementById('game-container');
         const gameElement = document.getElementById('game-element');
         const shootButton = document.getElementById('shoot-button');
 
@@ -77,10 +91,10 @@
             const y = distance * Math.sin(radians);
 
             oval.style.transform = `translate(${x}px, ${y}px)`;
-            document.body.appendChild(oval);
+            gameContainer.appendChild(oval);
 
             setTimeout(() => {
-                document.body.removeChild(oval);
+                gameContainer.removeChild(oval);
             }, 3000);
         }
     </script>
