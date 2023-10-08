@@ -1,79 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Game Controls</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light the Cells Game</title>
     <style>
-        /* Styling for the elements */
-        #player {
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* Adjust the number of columns as needed */
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .grid-cell {
             width: 50px;
             height: 50px;
-            background-color: blue;
-            position: absolute;
+            background-color: #ddd;
+            border: 1px solid #333;
+            cursor: pointer;
         }
-        #touchjoy {
-            width: 100px;
-            height: 100px;
-            border: 2px solid black;
-            border-radius: 50%;
-            background-color: transparent;
-            position: absolute;
-        }
-        #ground {
-            width: 100%;
-            height: 20px;
-            background-color: green;
-            position: absolute;
-            bottom: 0;
-        }
+
+        /* Add more CSS for styling as desired */
     </style>
 </head>
 <body>
-    <!-- Game Elements -->
-    <div id="player">Player</div>
-    <div id="touchjoy">Touchjoy</div>
-    <div id="ground"></div>
+    <h1>Welcome to "Light the Cells" Game!</h1>
+    <p>Instructions: Tap or click on cells to light them up!</p>
 
-    <!-- JavaScript for Controls -->
+    <div class="grid-container" id="grid">
+        <!-- JavaScript will populate this grid -->
+    </div>
+
     <script>
-        const player = document.getElementById('player');
-        const touchjoy = document.getElementById('touchjoy');
-        const ground = document.getElementById('ground');
-
-        touchjoy.addEventListener('mousemove', (event) => {
-            const outerCircle = touchjoy.getBoundingClientRect();
-            const innerCircle = touchjoy.firstElementChild.getBoundingClientRect();
-            const tjmove = {
-                x: event.clientX - outerCircle.left - outerCircle.width / 2,
-                y: event.clientY - outerCircle.top - outerCircle.height / 2
-            };
-
-            // Calculate the angle of the inner circle
-            const angle = Math.atan2(tjmove.y, tjmove.x);
-
-            // Calculate the distance from the center to the inner circle
-            const distance = Math.min(outerCircle.width / 2, Math.sqrt(tjmove.x ** 2 + tjmove.y ** 2));
-
-            // Move the inner circle
-            innerCircle.style.transform = `translate(${distance * Math.cos(angle)}px, ${distance * Math.sin(angle)}px)`;
-
-            // Your movement logic
-            if (tjmove.x < -10) {
-                player.style.left = `${parseInt(player.style.left || '0') - 5}px`;
-            } else if (tjmove.x > 10) {
-                player.style.left = `${parseInt(player.style.left || '0') + 5}px`;
+        const gridContainer = document.getElementById('grid');
+        
+        // Create a 5x5 grid, you can change this size
+        for (let row = 0; row < 5; row++) {
+            for (let col = 0; col < 5; col++) {
+                const cell = document.createElement('div');
+                cell.classList.add('grid-cell');
+                cell.addEventListener('click', () => toggleCell(cell));
+                gridContainer.appendChild(cell);
             }
+        }
 
-            if (tjmove.y < -10) {
-                player.style.top = `${parseInt(player.style.top || '0') - 5}px`;
-            } else if (tjmove.y > 10) {
-                player.style.top = `${parseInt(player.style.top || '0') + 5}px`;
-            }
-        });
-
-        touchjoy.addEventListener('mouseleave', () => {
-            // Reset inner circle to the center
-            touchjoy.firstElementChild.style.transform = 'translate(0, 0)';
-        });
+        function toggleCell(cell) {
+            cell.classList.toggle('lit'); // Add some CSS for the 'lit' state
+        }
     </script>
 </body>
 </html>
