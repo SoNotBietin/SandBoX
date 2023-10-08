@@ -3,48 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
+    <title>Platformer Game</title>
     <style>
-        /* Add some styling if you want */
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            background-color: #00FF00; /* Green ground */
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <input type="text" id="display" readonly>
-        <button onclick="clearDisplay()">C</button>
-        <button onclick="addToDisplay('7')">7</button>
-        <button onclick="addToDisplay('8')">8</button>
-        <button onclick="addToDisplay('9')">9</button>
-        <button onclick="addToDisplay('+')">+</button>
-        <button onclick="addToDisplay('4')">4</button>
-        <button onclick="addToDisplay('5')">5</button>
-        <button onclick="addToDisplay('6')">6</button>
-        <button onclick="addToDisplay('-')">-</button>
-        <button onclick="addToDisplay('1')">1</button>
-        <button onclick="addToDisplay('2')">2</button>
-        <button onclick="addToDisplay('3')">3</button>
-        <button onclick="addToDisplay('*')">*</button>
-        <button onclick="addToDisplay('0')">0</button>
-        <button onclick="addToDisplay('.')">.</button>
-        <button onclick="calculateResult()">=</button>
-        <button onclick="addToDisplay('/')">/</button>
-    </div>
-
+    <canvas id="gameCanvas"></canvas>
     <script>
-        let display = document.getElementById('display');
-        function addToDisplay(value) {
-            display.value += value;
-        }
-        function clearDisplay() {
-            display.value = '';
-        }
-        function calculateResult() {
-            try {
-                display.value = eval(display.value);
-            } catch (error) {
-                display.value = 'Error';
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // Set canvas dimensions to match the screen
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Player properties
+        const player = {
+            x: canvas.width / 2, // Initial X position
+            y: canvas.height / 2, // Initial Y position
+            size: 50, // Size of the player (adjust as needed)
+            color: "red", // Player color
+            speed: 5, // Player movement speed (adjust as needed)
+        };
+        
+        // Touch joystick properties
+        const joystick = {
+            x: 100, // Joystick X position
+            y: canvas.height - 100, // Joystick Y position
+            outerRadius: 40, // Outer circle radius
+            innerRadius: 20, // Inner circle radius
+        };
+        
+        // Initialize joystick position
+        let joystickX = joystick.x;
+        let joystickY = joystick.y;
+        
+        // Event listener for touch input
+        canvas.addEventListener("touchmove", (e) => {
+            // Update joystick position based on touch input
+            joystickX = e.touches[0].clientX;
+            joystickY = e.touches[0].clientY;
+        });
+        
+        // Game loop
+        function gameLoop() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw the player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size);
+            
+            // Draw the touch joystick
+            ctx.beginPath();
+            ctx.arc(joystick.x, joystick.y, joystick.outerRadius, 0, Math.PI * 2);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+            
+            // Draw the inner circle of the joystick
+            ctx.beginPath();
+            ctx.arc(joystickX, joystickY, joystick.innerRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
+            
+            // Update player position based on joystick input
+            const deltaX = joystickX - joystick.x;
+            const deltaY = joystickY - joystick.y;
+            const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+            
+            if (distance > joystick.outerRadius) {
+                const angle = Math.atan2(deltaY, deltaX);
+                player.x += Math.cos(angle) * player.speed;
+                player.y += Math.sin(angle) * player.speed;
             }
+            
+            // Request animation frame
+            requestAnimationFrame(gameLoop);
         }
+        
+        // Start the game loop
+        gameLoop();
     </script>
 </body>
 </html>
