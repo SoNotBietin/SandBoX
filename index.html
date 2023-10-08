@@ -10,8 +10,8 @@
             overflow: hidden;
         }
         canvas {
-            background-color: #00FF00; /* Green ground */
             display: block;
+            border: 2px solid black; /* Add a black border to the canvas */
         }
     </style>
 </head>
@@ -36,10 +36,10 @@
         
         // Touch joystick properties
         const joystick = {
-            x: 100, // Joystick X position
-            y: canvas.height - 100, // Joystick Y position
-            outerRadius: 40, // Outer circle radius
-            innerRadius: 20, // Inner circle radius
+            x: canvas.width / 4, // Joystick X position
+            y: canvas.height - canvas.height / 4, // Joystick Y position
+            outerRadius: canvas.width / 8, // Outer circle radius (adjust as needed)
+            innerRadius: canvas.width / 16, // Inner circle radius (adjust as needed)
         };
         
         // Initialize joystick position
@@ -48,9 +48,25 @@
         
         // Event listener for touch input
         canvas.addEventListener("touchmove", (e) => {
-            // Update joystick position based on touch input
-            joystickX = e.touches[0].clientX;
-            joystickY = e.touches[0].clientY;
+            // Calculate joystick position based on touch input
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            
+            // Calculate distance from joystick center
+            const deltaX = touchX - joystick.x;
+            const deltaY = touchY - joystick.y;
+            const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+            
+            // If the touch is within the outer circle, update joystick position
+            if (distance <= joystick.outerRadius) {
+                joystickX = touchX;
+                joystickY = touchY;
+            } else {
+                // Limit the joystick position to stay within the outer circle
+                const angle = Math.atan2(deltaY, deltaX);
+                joystickX = joystick.x + Math.cos(angle) * joystick.outerRadius;
+                joystickY = joystick.y + Math.sin(angle) * joystick.outerRadius;
+            }
         });
         
         // Game loop
