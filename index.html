@@ -1,14 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>SandBoX UGC</title>
+    <title>Fly & Shoot Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            background-color: #000;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <h1>Here is the TOS and PP of SandBoX's UGC</h1>
-  
-  <h2>Get Started:</h2>
-  <button onclick="window.location.href = 'privacy.html';">Privacy Policy</button>
-  <button onclick="window.location.href = 'terms.html';">Terms of Service</button>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Player
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 20,
+            color: 'white'
+        };
+
+        // Game loop
+        function gameLoop() {
+            requestAnimationFrame(gameLoop);
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the player
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            ctx.fillStyle = player.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // Start the game loop
+        gameLoop();
+    </script>
 </body>
 </html>
