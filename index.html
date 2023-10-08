@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Snake Game</title>
     <style>
         body {
@@ -12,6 +12,7 @@
             height: 100vh;
             margin: 0;
             background-color: #222;
+            overflow: hidden; /* Disable scrolling */
         }
         canvas {
             border: 2px solid #444;
@@ -85,28 +86,27 @@
             drawSnake();
         }
 
-        function handleTouchStart(event) {
-            const touchX = event.touches[0].clientX;
-            const touchY = event.touches[0].clientY;
+        function handleGesture(event) {
+            // Detect swipe direction
+            const x1 = event.touches[0].clientX;
+            const y1 = event.touches[0].clientY;
+            const x2 = event.changedTouches[0].clientX;
+            const y2 = event.changedTouches[0].clientY;
 
-            const canvasRect = canvas.getBoundingClientRect();
-            const canvasX = touchX - canvasRect.left;
-            const canvasY = touchY - canvasRect.top;
+            const deltaX = x2 - x1;
+            const deltaY = y2 - y1;
 
-            // Calculate direction based on touch location
-            const headX = snake[0].x * snakeSize + snakeSize / 2;
-            const headY = snake[0].y * snakeSize + snakeSize / 2;
-
-            if (Math.abs(headX - canvasX) > Math.abs(headY - canvasY)) {
-                if (canvasX > headX) direction = "right";
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) direction = "right";
                 else direction = "left";
             } else {
-                if (canvasY > headY) direction = "down";
+                if (deltaY > 0) direction = "down";
                 else direction = "up";
             }
         }
 
-        canvas.addEventListener("touchstart", handleTouchStart);
+        canvas.addEventListener("touchstart", handleGesture);
+        canvas.addEventListener("touchend", handleGesture);
 
         // Start the game loop
         const gameInterval = setInterval(update, 150);
