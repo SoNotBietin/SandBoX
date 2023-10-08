@@ -1,86 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fly and Shoot Game</title>
     <style>
         canvas {
-            border: 2px solid black;
-            display: block;
-            margin: 0 auto;
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // Player properties
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height - 30,
-            speed: 5,
-            width: 50,
-            height: 50,
-        };
+        // Define your game logic here
 
-        // Touch joystick properties
-        const joystick = {
-            x: 20,
-            y: canvas.height - 100,
-            radius: 30,
-            color: "blue",
-        };
+        // Now, let's create a touch joystick
+        const joystick = document.createElement("div");
+        joystick.style.position = "fixed";
+        joystick.style.bottom = "20px";
+        joystick.style.left = "20px";
+        joystick.style.width = "100px";
+        joystick.style.height = "100px";
+        joystick.style.background = "rgba(255, 0, 0, 0.5)";
+        joystick.style.borderRadius = "50%";
+        joystick.style.touchAction = "none";
+        joystick.style.pointerEvents = "auto";
+        document.body.appendChild(joystick);
 
-        // Game loop
-        function gameLoop() {
-            requestAnimationFrame(gameLoop);
+        // Handle joystick movement based on touch events
+        let isJoystickPressed = false;
+        let joystickX, joystickY;
 
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        joystick.addEventListener("pointerdown", (e) => {
+            isJoystickPressed = true;
+            joystickX = e.clientX;
+            joystickY = e.clientY;
+        });
 
-            // Move player using joystick
-            player.x += (joystick.x - player.x) * 0.1;
-            player.y += (joystick.y - player.y) * 0.1;
-
-            // Draw player
-            ctx.fillStyle = "red";
-            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
-
-            // Draw joystick
-            ctx.beginPath();
-            ctx.arc(joystick.x, joystick.y, joystick.radius, 0, Math.PI * 2);
-            ctx.fillStyle = joystick.color;
-            ctx.fill();
-            ctx.closePath();
-        }
-
-        // Handle touch events for joystick
-        canvas.addEventListener("touchstart", (e) => {
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            const distance = Math.sqrt(Math.pow(touchX - joystick.x, 2) + Math.pow(touchY - joystick.y, 2));
-
-            if (distance < joystick.radius) {
-                canvas.addEventListener("touchmove", handleTouchMove);
+        joystick.addEventListener("pointermove", (e) => {
+            if (isJoystickPressed) {
+                const dx = e.clientX - joystickX;
+                const dy = e.clientY - joystickY;
+                // Use dx and dy to control your game character's movement
+                // Update game logic accordingly
+                console.log(`Joystick moved: dx=${dx}, dy=${dy}`);
+                joystickX = e.clientX;
+                joystickY = e.clientY;
             }
         });
 
-        function handleTouchMove(e) {
-            joystick.x = e.touches[0].clientX;
-            joystick.y = e.touches[0].clientY;
-        }
-
-        canvas.addEventListener("touchend", () => {
-            joystick.x = 20;
-            joystick.y = canvas.height - 100;
-            canvas.removeEventListener("touchmove", handleTouchMove);
+        joystick.addEventListener("pointerup", () => {
+            isJoystickPressed = false;
         });
-
-        // Start the game loop
-        gameLoop();
     </script>
 </body>
 </html>
