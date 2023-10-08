@@ -1,57 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fancy Text Editor</title>
+    <title>2D Platformer</title>
     <style>
+        /* Your CSS goes here for styling the player and touchjoy */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #222;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
-        #editor-container {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            width: 80%;
-            height: 80%;
-            background-color: #333;
-            border: 2px solid #777;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-            color: white;
-            resize: both;
-            overflow: auto;
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #222;
+            position: relative;
         }
-        #editor {
-            width: 100%;
-            height: 100%;
-            padding: 10px;
-            box-sizing: border-box;
+        #player {
+            width: 50px;
+            height: 50px;
+            background-color: #3498db;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #touchjoy-container {
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #touchjoy {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 0, 0, 0.5);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
 <body>
-    <div id="editor-container" draggable="true">
-        <div id="editor" contenteditable="true">
-            Start typing your masterpiece here...
+    <div id="game-container">
+        <div id="player"></div>
+        <div id="touchjoy-container">
+            <div id="touchjoy"></div>
         </div>
     </div>
 
     <script>
-        const editorContainer = document.getElementById("editor-container");
+        // JavaScript to handle touch controls
+        const touchjoyContainer = document.getElementById("touchjoy-container");
+        const touchjoy = document.getElementById("touchjoy");
+        const player = document.getElementById("player");
 
-        editorContainer.addEventListener("dragstart", (e) => {
-            e.dataTransfer.setData("text/plain", "dragging");
+        touchjoyContainer.addEventListener("touchstart", (e) => {
+            // Handle touch start
+            // Calculate touchjoy position based on touch start
+            const touchX = e.touches[0].clientX - touchjoyContainer.getBoundingClientRect().left;
+            const touchY = e.touches[0].clientY - touchjoyContainer.getBoundingClientRect().top;
+            movePlayer(touchX, touchY);
         });
 
-        editorContainer.addEventListener("dragend", () => {
-            // Nothing to do here, just enjoying the drag.
+        touchjoyContainer.addEventListener("touchmove", (e) => {
+            // Handle touch move
+            // Calculate touchjoy position based on touch move
+            const touchX = e.touches[0].clientX - touchjoyContainer.getBoundingClientRect().left;
+            const touchY = e.touches[0].clientY - touchjoyContainer.getBoundingClientRect().top;
+            movePlayer(touchX, touchY);
         });
 
-        // Mobile device support
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            editorContainer.style.touchAction = "none";
+        function movePlayer(x, y) {
+            // Move the player to the new position
+            player.style.left = x - 25 + "px"; // Adjust for player size
+            player.style.top = y - 25 + "px"; // Adjust for player size
         }
     </script>
 </body>
