@@ -3,60 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly and Shoot Game</title>
+    <title>Touch2move Game</title>
     <style>
-        canvas {
-            border: 1px solid black;
+        /* Style your game element here */
+        #game-element {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="game-element"></div>
+
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+        const gameElement = document.getElementById('game-element');
 
-        // Define your game logic here
+        let isDragging = false;
 
-        // Now, let's create a touch joystick
-        const joystick = document.createElement("div");
-        joystick.style.position = "fixed";
-        joystick.style.bottom = "20px";
-        joystick.style.left = "20px";
-        joystick.style.width = "100px";
-        joystick.style.height = "100px";
-        joystick.style.background = "rgba(255, 0, 0, 0.5)";
-        joystick.style.borderRadius = "50%";
-        joystick.style.touchAction = "none";
-        joystick.style.pointerEvents = "auto";
-        document.body.appendChild(joystick);
-
-        // Handle joystick movement based on touch events
-        let isJoystickPressed = false;
-        let joystickX, joystickY;
-
-        joystick.addEventListener("pointerdown", (e) => {
-            isJoystickPressed = true;
-            joystickX = e.clientX;
-            joystickY = e.clientY;
+        gameElement.addEventListener('touchstart', (e) => {
+            isDragging = true;
         });
 
-        joystick.addEventListener("pointermove", (e) => {
-            if (isJoystickPressed) {
-                const dx = e.clientX - joystickX;
-                const dy = e.clientY - joystickY;
-                // Use dx and dy to control your game character's movement
-                // Update game logic accordingly
-                console.log(`Joystick moved: dx=${dx}, dy=${dy}`);
-                joystickX = e.clientX;
-                joystickY = e.clientY;
+        gameElement.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                gameElement.style.left = touch.clientX - gameElement.clientWidth / 2 + 'px';
+                gameElement.style.top = touch.clientY - gameElement.clientHeight / 2 + 'px';
             }
         });
 
-        joystick.addEventListener("pointerup", () => {
-            isJoystickPressed = false;
+        gameElement.addEventListener('touchend', () => {
+            isDragging = false;
         });
     </script>
 </body>
 </html>
-
