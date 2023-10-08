@@ -3,61 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gravity Playground</title>
+    <title>Leo's Awesome Paint App</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
         }
 
-        #container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        #canvas {
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
-    <div id="container"></div>
-
+    <canvas id="canvas" width="800" height="600"></canvas>
     <script>
-        const container = document.getElementById('container');
-        const circles = [];
-        const squares = [];
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
 
-        container.addEventListener('mousedown', (e) => {
-            if (e.button === 0) { // Left mouse button for circles
-                createCircle(e.clientX, e.clientY);
-            } else if (e.button === 2) { // Right mouse button for squares
-                createSquare(e.clientX, e.clientY);
-            }
-        });
-
-        container.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) { // Two-finger tap for circles
-                createCircle(e.touches[0].clientX, e.touches[0].clientY);
-            } else if (e.touches.length === 3) { // Three-finger tap for squares
-                createSquare(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-
-        function createCircle(x, y) {
-            const circle = document.createElement('div');
-            circle.className = 'circle';
-            circle.style.left = x + 'px';
-            circle.style.top = y + 'px';
-            container.appendChild(circle);
-            circles.push(circle);
+        function startPosition(e) {
+            painting = true;
+            draw(e);
         }
 
-        function createSquare(x, y) {
-            const square = document.createElement('div');
-            square.className = 'square';
-            square.style.left = x + 'px';
-            square.style.top = y + 'px';
-            container.appendChild(square);
-            squares.push(square);
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
         }
+
+        function draw(e) {
+            if (!painting) return;
+
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
     </script>
 </body>
 </html>
