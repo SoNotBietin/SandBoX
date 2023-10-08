@@ -1,34 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Guess the Number</title>
+    <title>Fancy Text Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #editor-container {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 80%;
+            height: 80%;
+            background-color: #333;
+            border: 2px solid #777;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+            color: white;
+            resize: both;
+            overflow: auto;
+        }
+        #editor {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Most Basic Game Ever!</h1>
-    <p>I call it "Guess the Number."</p>
-
-    <label for="guess">Enter a number between 1 and 100: </label>
-    <input type="text" id="guess" />
-    <button onclick="checkGuess()">Submit Guess</button>
-
-    <p id="message"></p>
+    <div id="editor-container" draggable="true">
+        <div id="editor" contenteditable="true">
+            Start typing your masterpiece here...
+        </div>
+    </div>
 
     <script>
-        // Generate a random number between 1 and 100
-        const secretNumber = Math.floor(Math.random() * 100) + 1;
-        let attempts = 0;
+        const editorContainer = document.getElementById("editor-container");
 
-        function checkGuess() {
-            const guess = parseInt(document.getElementById("guess").value);
-            attempts++;
+        editorContainer.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", "dragging");
+        });
 
-            if (guess === secretNumber) {
-                document.getElementById("message").innerHTML = `Congratulations, Leo! You guessed it in ${attempts} attempts. The secret number was ${secretNumber}. You're a genius!`;
-            } else if (guess < secretNumber) {
-                document.getElementById("message").innerHTML = "Too low! Try again, Leo.";
-            } else {
-                document.getElementById("message").innerHTML = "Too high! Give it another shot, Leo.";
-            }
+        editorContainer.addEventListener("dragend", () => {
+            // Nothing to do here, just enjoying the drag.
+        });
+
+        // Mobile device support
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            editorContainer.style.touchAction = "none";
         }
     </script>
 </body>
