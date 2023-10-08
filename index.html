@@ -2,164 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Snake Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Playground</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             margin: 0;
-            background-color: #222;
             overflow: hidden;
         }
-        canvas {
-            border: 2px solid #444;
-        }
-        #joystick {
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
+
+        #container {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #innerJoystick {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="joystick">
-        <div id="innerJoystick"></div>
-    </div>
+    <div id="container"></div>
+
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        const joystick = document.getElementById("joystick");
-        const innerJoystick = document.getElementById("innerJoystick");
+        const container = document.getElementById('container');
+        const circles = [];
+        const squares = [];
 
-        const snakeSize = 20;
-        let snake = [{x: 10, y: 10}];
-        let food = {x: 5, y: 5};
-        let direction = "right";
-
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        let joystickActive = false;
-
-        function drawSnake() {
-            ctx.fillStyle = "green";
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillRect(snake[i].x * snakeSize, snake[i].y * snakeSize, snakeSize, snakeSize);
+        container.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // Left mouse button for circles
+                createCircle(e.clientX, e.clientY);
+            } else if (e.button === 2) { // Right mouse button for squares
+                createSquare(e.clientX, e.clientY);
             }
-        }
+        });
 
-        function drawFood() {
-            ctx.fillStyle = "red";
-            ctx.fillRect(food.x * snakeSize, food.y * snakeSize, snakeSize, snakeSize);
-        }
-
-        function update() {
-            // Update snake position
-            let headX = snake[0].x;
-            let headY = snake[0].y;
-
-            if (direction === "right") headX++;
-            if (direction === "left") headX--;
-            if (direction === "up") headY--;
-            if (direction === "down") headY++;
-
-            let newHead = {x: headX, y: headY};
-
-            // Check for collision with food
-            if (headX === food.x && headY === food.y) {
-                snake.unshift(newHead); // Add new head
-                food.x = Math.floor(Math.random() * canvas.width / snakeSize);
-                food.y = Math.floor(Math.random() * canvas.height / snakeSize);
-            } else {
-                snake.pop(); // Remove tail
-                snake.unshift(newHead); // Add new head
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) { // Two-finger tap for circles
+                createCircle(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.touches.length === 3) { // Three-finger tap for squares
+                createSquare(e.touches[0].clientX, e.touches[0].clientY);
             }
+        });
 
-            // Check for collision with walls
-            if (headX < 0 || headX >= canvas.width / snakeSize || headY < 0 || headY >= canvas.height / snakeSize) {
-                clearInterval(gameInterval);
-                alert("Game Over!");
-            }
-
-            // Check for collision with itself
-            for (let i = 1; i < snake.length; i++) {
-                if (headX === snake[i].x && headY === snake[i].y) {
-                    clearInterval(gameInterval);
-                    alert("Game Over!");
-                }
-            }
-
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw food and snake
-            drawFood();
-            drawSnake();
+        function createCircle(x, y) {
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            circle.style.left = x + 'px';
+            circle.style.top = y + 'px';
+            container.appendChild(circle);
+            circles.push(circle);
         }
 
-        function handleTouchStart(event) {
-            joystickActive = true;
-            touchStartX = event.touches[0].clientX;
-            touchStartY = event.touches[0].clientY;
+        function createSquare(x, y) {
+            const square = document.createElement('div');
+            square.className = 'square';
+            square.style.left = x + 'px';
+            square.style.top = y + 'px';
+            container.appendChild(square);
+            squares.push(square);
         }
-
-        function handleTouchMove(event) {
-            if (!joystickActive) return;
-
-            const touchX = event.touches[0].clientX;
-            const touchY = event.touches[0].clientY;
-
-            const deltaX = touchX - touchStartX;
-            const deltaY = touchY - touchStartY;
-
-            // Calculate angle and direction
-            const angle = Math.atan2(deltaY, deltaX);
-            if (angle >= -Math.PI / 4 && angle < Math.PI / 4) direction = "right";
-            else if (angle >= Math.PI / 4 && angle < 3 * Math.PI / 4) direction = "up";
-            else if (angle >= -3 * Math.PI / 4 && angle < -Math.PI / 4) direction = "down";
-            else direction = "left";
-
-            // Limit joystick movement
-            const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), 50);
-
-            const innerJoystickX = distance * Math.cos(angle);
-            const innerJoystickY = distance * Math.sin(angle);
-
-            innerJoystick.style.transform = `translate(${innerJoystickX}px, ${innerJoystickY}px)`;
-
-            // Prevent scrolling on touch devices
-            event.preventDefault();
-        }
-
-        function handleTouchEnd() {
-            joystickActive = false;
-            innerJoystick.style.transform = "translate(0, 0)";
-        }
-
-        canvas.addEventListener("touchstart", handleTouchStart);
-        canvas.addEventListener("touchmove", handleTouchMove);
-        canvas.addEventListener("touchend", handleTouchEnd);
-
-        // Start the game loop
-        const gameInterval = setInterval(update, 150);
     </script>
 </body>
 </html>
