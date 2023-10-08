@@ -3,55 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Light the Cells Game</title>
+    <title>TopView 2D Player</title>
     <style>
+        /* Add your CSS styling here */
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            margin: 0;
+            overflow: hidden;
         }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); /* Adjust the number of columns as needed */
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .grid-cell {
-            width: 50px;
-            height: 50px;
-            background-color: #ddd;
-            border: 1px solid #333;
-            cursor: pointer;
-        }
-
-        /* Add more CSS for styling as desired */
     </style>
 </head>
 <body>
-    <h1>Welcome to "Light the Cells" Game!</h1>
-    <p>Instructions: Tap or click on cells to light them up!</p>
-
-    <div class="grid-container" id="grid">
-        <!-- JavaScript will populate this grid -->
-    </div>
-
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
     <script>
-        const gridContainer = document.getElementById('grid');
-        
-        // Create a 5x5 grid, you can change this size
-        for (let row = 0; row < 5; row++) {
-            for (let col = 0; col < 5; col++) {
-                const cell = document.createElement('div');
-                cell.classList.add('grid-cell');
-                cell.addEventListener('click', () => toggleCell(cell));
-                gridContainer.appendChild(cell);
-            }
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Your game logic goes here
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 50,
+            height: 50,
+            // Add more player properties as needed
+        };
+
+        function drawPlayer() {
+            ctx.fillStyle = "blue"; // Change color as desired
+            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
         }
 
-        function toggleCell(cell) {
-            cell.classList.toggle('lit'); // Add some CSS for the 'lit' state
+        // Handle touch controls
+        canvas.addEventListener("touchstart", handleTouchStart);
+        canvas.addEventListener("touchmove", handleTouchMove);
+
+        let touchStartX = 0;
+
+        function handleTouchStart(event) {
+            touchStartX = event.touches[0].clientX;
         }
+
+        function handleTouchMove(event) {
+            const touchX = event.touches[0].clientX;
+            const deltaX = touchX - touchStartX;
+
+            // Use deltaX to control your player's movement
+            player.x += deltaX;
+
+            touchStartX = touchX;
+        }
+
+        // Your game loop and rendering code goes here
+        function gameLoop() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and render your game elements here
+            drawPlayer();
+
+            // Request the next frame
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game loop
+        gameLoop();
+
     </script>
 </body>
 </html>
