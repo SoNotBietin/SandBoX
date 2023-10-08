@@ -1,96 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Snake Game</title>
-  <style>
-    body {
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    canvas {
-      border: 2px solid white;
-    }
-  </style>
+    <title>Game Controls</title>
+    <style>
+        /* Styling for the elements */
+        #player {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            position: absolute;
+        }
+        #touchjoy {
+            width: 100px;
+            height: 100px;
+            border: 2px solid black;
+            border-radius: 50%;
+            background-color: transparent;
+            position: absolute;
+        }
+        #ground {
+            width: 100%;
+            height: 20px;
+            background-color: green;
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="snakeCanvas" width="400" height="400"></canvas>
-  <script>
-    const canvas = document.getElementById("snakeCanvas");
-    const ctx = canvas.getContext("2d");
+    <!-- Game Elements -->
+    <div id="player">Player</div>
+    <div id="touchjoy">Touchjoy</div>
+    <div id="ground"></div>
 
-    const gridSize = 20;
-    const snakeColor = "green";
-    const foodColor = "red";
+    <!-- JavaScript for Controls -->
+    <script>
+        const player = document.getElementById('player');
+        const touchjoy = document.getElementById('touchjoy');
+        const ground = document.getElementById('ground');
 
-    let snake = [{ x: 10, y: 10 }];
-    let food = { x: 5, y: 5 };
-    let dx = 0;
-    let dy = gridSize;
+        touchjoy.addEventListener('mousemove', (event) => {
+            const outerCircle = touchjoy.getBoundingClientRect();
+            const innerCircle = touchjoy.firstElementChild.getBoundingClientRect();
+            const tjmove = {
+                x: event.clientX - outerCircle.left - outerCircle.width / 2,
+                y: event.clientY - outerCircle.top - outerCircle.height / 2
+            };
 
-    function drawSnake() {
-      ctx.fillStyle = snakeColor;
-      snake.forEach((segment) => {
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
-      });
-    }
+            // Calculate the angle of the inner circle
+            const angle = Math.atan2(tjmove.y, tjmove.x);
 
-    function drawFood() {
-      ctx.fillStyle = foodColor;
-      ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
-    }
+            // Calculate the distance from the center to the inner circle
+            const distance = Math.min(outerCircle.width / 2, Math.sqrt(tjmove.x ** 2 + tjmove.y ** 2));
 
-    function update() {
-      const headX = snake[0].x + dx;
-      const headY = snake[0].y + dy;
+            // Move the inner circle
+            innerCircle.style.transform = `translate(${distance * Math.cos(angle)}px, ${distance * Math.sin(angle)}px)`;
 
-      if (headX === food.x && headY === food.y) {
-        snake.unshift({ x: headX, y: headY });
-        food.x = Math.floor(Math.random() * (canvas.width / gridSize));
-        food.y = Math.floor(Math.random() * (canvas.height / gridSize));
-      } else {
-        snake.pop();
-        snake.unshift({ x: headX, y: headY });
-      }
-    }
+            // Your movement logic
+            if (tjmove.x < -10) {
+                player.style.left = `${parseInt(player.style.left || '0') - 5}px`;
+            } else if (tjmove.x > 10) {
+                player.style.left = `${parseInt(player.style.left || '0') + 5}px`;
+            }
 
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+            if (tjmove.y < -10) {
+                player.style.top = `${parseInt(player.style.top || '0') - 5}px`;
+            } else if (tjmove.y > 10) {
+                player.style.top = `${parseInt(player.style.top || '0') + 5}px`;
+            }
+        });
 
-    function gameLoop() {
-      clearCanvas();
-      drawSnake();
-      drawFood();
-      update();
-    }
-
-    document.addEventListener("keydown", (e) => {
-      switch (e.key) {
-        case "ArrowUp":
-          dx = 0;
-          dy = -gridSize;
-          break;
-        case "ArrowDown":
-          dx = 0;
-          dy = gridSize;
-          break;
-        case "ArrowLeft":
-          dx = -gridSize;
-          dy = 0;
-          break;
-        case "ArrowRight":
-          dx = gridSize;
-          dy = 0;
-          break;
-      }
-    });
-
-    setInterval(gameLoop, 100);
-  </script>
+        touchjoy.addEventListener('mouseleave', () => {
+            // Reset inner circle to the center
+            touchjoy.firstElementChild.style.transform = 'translate(0, 0)';
+        });
+    </script>
 </body>
 </html>
