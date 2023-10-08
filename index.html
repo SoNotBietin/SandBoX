@@ -10,8 +10,8 @@
             overflow: hidden;
         }
         canvas {
+            background-color: #00FF00; /* Green ground */
             display: block;
-            border: 2px solid black; /* Add a black border to the canvas */
         }
     </style>
 </head>
@@ -36,10 +36,10 @@
         
         // Touch joystick properties
         const joystick = {
-            x: canvas.width / 4, // Joystick X position
-            y: canvas.height - canvas.height / 4, // Joystick Y position
-            outerRadius: canvas.width / 8, // Outer circle radius (adjust as needed)
-            innerRadius: canvas.width / 16, // Inner circle radius (adjust as needed)
+            x: 100, // Joystick X position
+            y: canvas.height - 100, // Joystick Y position
+            outerRadius: 40, // Outer circle radius
+            innerRadius: 20, // Inner circle radius
         };
         
         // Initialize joystick position
@@ -48,21 +48,18 @@
         
         // Event listener for touch input
         canvas.addEventListener("touchmove", (e) => {
-            // Calculate joystick position based on touch input
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            
-            // Calculate distance from joystick center
-            const deltaX = touchX - joystick.x;
-            const deltaY = touchY - joystick.y;
+            // Calculate the distance between touch point and joystick center
+            const deltaX = e.touches[0].clientX - joystick.x;
+            const deltaY = e.touches[0].clientY - joystick.y;
             const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
             
-            // If the touch is within the outer circle, update joystick position
+            // If the touch point is within the outer circle radius
             if (distance <= joystick.outerRadius) {
-                joystickX = touchX;
-                joystickY = touchY;
+                // Update joystick position based on touch input
+                joystickX = e.touches[0].clientX;
+                joystickY = e.touches[0].clientY;
             } else {
-                // Limit the joystick position to stay within the outer circle
+                // Keep the inner circle (joystick) within the outer circle (joycircle)
                 const angle = Math.atan2(deltaY, deltaX);
                 joystickX = joystick.x + Math.cos(angle) * joystick.outerRadius;
                 joystickY = joystick.y + Math.sin(angle) * joystick.outerRadius;
@@ -98,7 +95,7 @@
             const deltaY = joystickY - joystick.y;
             const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
             
-            if (distance > joystick.outerRadius) {
+            if (distance > joystick.innerRadius) {
                 const angle = Math.atan2(deltaY, deltaX);
                 player.x += Math.cos(angle) * player.speed;
                 player.y += Math.sin(angle) * player.speed;
@@ -113,3 +110,4 @@
     </script>
 </body>
 </html>
+
