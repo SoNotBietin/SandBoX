@@ -1,49 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leo's Paint App</title>
-    <style>
-        #canvas {
-            border: 2px solid black;
-        }
-    </style>
+    <title>Guess the Number</title>
 </head>
 <body>
-    <canvas id="canvas" width="800" height="600"></canvas>
+    <h1>Welcome to the Most Basic Game Ever!</h1>
+    <p>I call it "Guess the Number."</p>
+
+    <label for="guess">Enter a number between 1 and 100: </label>
+    <input type="text" id="guess" />
+    <button onclick="checkGuess()">Submit Guess</button>
+
+    <p id="message"></p>
+
     <script>
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
+        // Generate a random number between 1 and 100
+        const secretNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
 
-        let painting = false;
+        function checkGuess() {
+            const guess = parseInt(document.getElementById("guess").value);
+            attempts++;
 
-        function startPosition(e) {
-            painting = true;
-            draw(e);
+            if (guess === secretNumber) {
+                document.getElementById("message").innerHTML = `Congratulations, Leo! You guessed it in ${attempts} attempts. The secret number was ${secretNumber}. You're a genius!`;
+            } else if (guess < secretNumber) {
+                document.getElementById("message").innerHTML = "Too low! Try again, Leo.";
+            } else {
+                document.getElementById("message").innerHTML = "Too high! Give it another shot, Leo.";
+            }
         }
-
-        function endPosition() {
-            painting = false;
-            ctx.beginPath();
-        }
-
-        function draw(e) {
-            if (!painting) return;
-
-            ctx.lineWidth = 5;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = "black";
-
-            ctx.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
-        }
-
-        canvas.addEventListener("touchstart", startPosition);
-        canvas.addEventListener("touchend", endPosition);
-        canvas.addEventListener("touchmove", draw);
     </script>
 </body>
 </html>
