@@ -1,78 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Leo's Basic Platformer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        canvas {
-            background-color: #87CEEB;
-            display: block;
-        }
+        /* Add some styling if you want */
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        <button onclick="clearDisplay()">C</button>
+        <button onclick="addToDisplay('7')">7</button>
+        <button onclick="addToDisplay('8')">8</button>
+        <button onclick="addToDisplay('9')">9</button>
+        <button onclick="addToDisplay('+')">+</button>
+        <button onclick="addToDisplay('4')">4</button>
+        <button onclick="addToDisplay('5')">5</button>
+        <button onclick="addToDisplay('6')">6</button>
+        <button onclick="addToDisplay('-')">-</button>
+        <button onclick="addToDisplay('1')">1</button>
+        <button onclick="addToDisplay('2')">2</button>
+        <button onclick="addToDisplay('3')">3</button>
+        <button onclick="addToDisplay('*')">*</button>
+        <button onclick="addToDisplay('0')">0</button>
+        <button onclick="addToDisplay('.')">.</button>
+        <button onclick="calculateResult()">=</button>
+        <button onclick="addToDisplay('/')">/</button>
+    </div>
+
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Define player properties
-        const player = {
-            x: 50,
-            y: canvas.height - 50,
-            width: 30,
-            height: 30,
-            speed: 5,
-            jumpPower: 10,
-            isJumping: false,
-        };
-
-        // Define platform properties
-        const platform = {
-            x: 0,
-            y: canvas.height - 20,
-            width: canvas.width,
-            height: 20,
-        };
-
-        // Game loop
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Move the player
-            if (player.isJumping) {
-                player.y -= player.jumpPower;
-            }
-
-            // Draw the platform
-            ctx.fillStyle = "#228B22";
-            ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-
-            // Draw the player
-            ctx.fillStyle = "#FF0000";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-
-            // Check for collisions
-            if (player.y + player.height >= platform.y && player.x + player.width >= platform.x && player.x <= platform.x + platform.width) {
-                player.y = platform.y - player.height;
-                player.isJumping = false;
-            }
-
-            requestAnimationFrame(gameLoop);
+        let display = document.getElementById('display');
+        function addToDisplay(value) {
+            display.value += value;
         }
-
-        // Handle touch controls
-        document.addEventListener("touchstart", () => {
-            if (!player.isJumping) {
-                player.isJumping = true;
+        function clearDisplay() {
+            display.value = '';
+        }
+        function calculateResult() {
+            try {
+                display.value = eval(display.value);
+            } catch (error) {
+                display.value = 'Error';
             }
-        });
-
-        gameLoop();
+        }
     </script>
 </body>
 </html>
