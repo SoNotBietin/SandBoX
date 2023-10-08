@@ -3,69 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terraria-Like Game</title>
+    <title>Browser Info App</title>
     <style>
-        #player {
-            width: 50px;
-            height: 50px;
-            background-color: blue;
-            position: absolute;
-            bottom: 0;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
         }
-
-        #ground {
-            width: 100%;
-            height: 20px;
-            background-color: green;
-            position: absolute;
-            bottom: 0;
+        #info {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
-    <div id="player"></div>
-    <div id="ground"></div>
+    <div id="info">
+        <h1>Browser Information</h1>
+        <p><strong>Browser Name:</strong> <span id="browserName"></span></p>
+        <p><strong>Browser Version:</strong> <span id="browserVersion"></span></p>
+        <p><strong>Operating System:</strong> <span id="os"></span></p>
+    </div>
 
     <script>
-        const player = document.getElementById("player");
-        const ground = document.getElementById("ground");
+        // Get browser information
+        const browserName = navigator.userAgent;
+        const browserVersion = navigator.appVersion;
+        const os = navigator.platform;
 
-        // Initial player position
-        let playerPos = 0;
-
-        // Handle left-button (lb) press
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowLeft") {
-                playerPos -= 5;
-                player.style.left = playerPos + "px";
-            }
-        });
-
-        // Handle right-button (rb) press
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowRight") {
-                playerPos += 5;
-                player.style.left = playerPos + "px";
-            }
-        });
-
-        // Collision detection
-        function checkCollision() {
-            const playerRect = player.getBoundingClientRect();
-            const groundRect = ground.getBoundingClientRect();
-
-            if (playerRect.bottom >= groundRect.top) {
-                player.style.bottom = groundRect.height + "px";
-            }
-        }
-
-        // Game loop
-        function gameLoop() {
-            checkCollision();
-            requestAnimationFrame(gameLoop);
-        }
-
-        gameLoop();
+        // Display browser information
+        document.getElementById("browserName").textContent = browserName;
+        document.getElementById("browserVersion").textContent = browserVersion;
+        document.getElementById("os").textContent = os;
     </script>
 </body>
 </html>
