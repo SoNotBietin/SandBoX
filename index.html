@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraria-Like Game</title>
     <style>
         #player {
             width: 50px;
@@ -10,7 +11,6 @@
             background-color: blue;
             position: absolute;
             bottom: 0;
-            left: 0;
         }
 
         #ground {
@@ -27,50 +27,45 @@
     <div id="ground"></div>
 
     <script>
-        const player = document.getElementById('player');
-        const ground = document.getElementById('ground');
+        const player = document.getElementById("player");
+        const ground = document.getElementById("ground");
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowLeft') {
-                movePlayerLeft();
-            } else if (event.key === 'ArrowRight') {
-                movePlayerRight();
+        // Initial player position
+        let playerPos = 0;
+
+        // Handle left-button (lb) press
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft") {
+                playerPos -= 5;
+                player.style.left = playerPos + "px";
             }
         });
 
-        function movePlayerLeft() {
-            const currentPosition = player.style.left ? parseInt(player.style.left) : 0;
-            if (currentPosition > 0) {
-                player.style.left = (currentPosition - 5) + 'px';
+        // Handle right-button (rb) press
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                playerPos += 5;
+                player.style.left = playerPos + "px";
             }
-        }
+        });
 
-        function movePlayerRight() {
-            const currentPosition = player.style.left ? parseInt(player.style.left) : 0;
-            const playerWidth = player.offsetWidth;
-            const screenWidth = window.innerWidth;
-            if (currentPosition + playerWidth < screenWidth) {
-                player.style.left = (currentPosition + 5) + 'px';
-            }
-        }
-
+        // Collision detection
         function checkCollision() {
             const playerRect = player.getBoundingClientRect();
             const groundRect = ground.getBoundingClientRect();
 
-            if (
-                playerRect.bottom >= groundRect.top &&
-                playerRect.right >= groundRect.left &&
-                playerRect.left <= groundRect.right
-            ) {
-                // You can add your collision logic here.
-                // For now, let's just log it.
-                console.log('Collision detected!');
+            if (playerRect.bottom >= groundRect.top) {
+                player.style.bottom = groundRect.height + "px";
             }
         }
 
-        // Check for collision on a timer.
-        setInterval(checkCollision, 100);
+        // Game loop
+        function gameLoop() {
+            checkCollision();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
     </script>
 </body>
 </html>
